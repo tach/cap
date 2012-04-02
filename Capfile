@@ -1,5 +1,5 @@
 # Capfile for tach
 
 load 'config'
-Dir.glob('common/*.rb').each { |file| load file unless file.match(/_test/) }
+Dir.glob('lib/*.rb').each { |file| load file }
 Dir.glob('tasks/*.rb').each { |file| load file }
