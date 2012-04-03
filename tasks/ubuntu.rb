@@ -16,7 +16,7 @@ namespace :ubuntu1004 do
 
   task :dist_upgrade do
     # Set sources.list
-    new_dist = ENV['distribution'] or raise "Specify distribution"
+    new_dist = ENV['dist'] or raise "Specify distribution"
     sources_list = <<_EOT
 # This file is generated automatically by Capistrano
 # See https://github.com/tach/cap/ for details.
@@ -38,7 +38,19 @@ _EOT
     # Upgrade
     debconf_noninteractive
     run "#{sudo} apt-get update"
-    install_deb('dpkg', 'apt', 'debconf', 'libc6', 'python-minimal')
+    # TODO: Failed because debconf dialog has shown
+    #       debconf noniteractive setting disabled?
+    #install_deb('apt')
+    #install_deb('dpkg')
+    #install_deb('libc6')
+    #install_deb('debconf')
+    #run "#{sudo} apt-get -y --force-yes upgrade"
+    # TODO: Failed because python-minimal and python2.7 is conflict with
+    #       old one
+    #run "#{sudo} apt-get -y --force-yes dist-upgrade"
+    # TODO: after that, we mustrun update-grub and grub-install
+    # TODO: /etc/resolv.conf has been empty because of resolvconf package
+    #       We should fix this
     debconf_interactive
   end
 
@@ -99,6 +111,7 @@ def exec_minimize(filename)
   put sel_str, sel_file
 
   # Set selections
+  run "#{sudo} apt-get update"
   run "#{sudo} dpkg --clear-selections"
   run "#{sudo} dpkg --set-selections < #{sel_file}"
   run "rm -f #{sel_file}"
