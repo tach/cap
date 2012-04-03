@@ -81,26 +81,9 @@ _EOT
     # Update unbound.conf
     tmp_conf = "/tmp/unbound.conf.#{rand}"
     put conf, tmp_conf
-    run "sudo cp #{tmp_conf} /etc/unbound/unbound.conf"
+    run "#{sudo} cp #{tmp_conf} /etc/unbound/unbound.conf"
     run "rm #{tmp_conf}"
     run "#{sudo} service unbound restart"
-
-    # Generate resolv.conf
-    ns_str = ''
-    dns_servers.map { |addr| ns_str << "nameserver #{addr}\n" }
-    conf = <<_EOT
-# This file is generated automatically by Capistrano
-# See https://github.com/tach/cap/ for details.
-search #{search_domains.join(' ')}
-nameserver 127.0.0.1
-#{ns_str}
-_EOT
-
-    # Update resolv.conf
-    tmp_conf = "/tmp/resolv.conf.#{rand}"
-    put conf, tmp_conf
-    run "sudo cp #{tmp_conf} /etc/resolv.conf"
-    run "rm #{tmp_conf}"
   end
 end
 
