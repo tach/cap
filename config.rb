@@ -15,5 +15,7 @@ set :search_domains, [ 'arege.jp' ]
 set :pkgs, [
   'lv', 'zsh', 'fdclone', 'vim', 'wget', 'w3m', 'rsync',
   'git-core', 'subversion',
-  'lsof', 'logcheck',
+  'logcheck',
+  'lsof', 'strace', 'ltrace', 'tcpdump',
+  'language-pack-ja', 'language-pack-ja-base', 'nkf',
 ]
