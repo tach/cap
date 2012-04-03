@@ -36,8 +36,10 @@ _EOT
     put_as_root(sources_list, "/etc/apt/sources.list")
 
     # Upgrade
+    debconf_noninteractive
     run "#{sudo} apt-get update"
     install_deb('dpkg', 'apt', 'debconf', 'libc6', 'python-minimal')
+    debconf_interactive
   end
 
   task :minimize, :roles => :ubuntu1004 do
@@ -107,7 +109,17 @@ def exec_minimize(filename)
 end
 
 def install_deb(*pkgs)
+  debconf_noninteractive
   run "#{sudo} apt-get -y --force-yes install #{pkgs.join(' ')}"
+  debconf_interactive
+end
+
+def debconf_noninteractive
+  run "echo 'debconf debconf/frontend select Noninteractive' | #{sudo} debconf-set-selections"
+end
+
+def debconf_interactive
+  run "echo 'debconf debconf/frontend select Dialog' | #{sudo} debconf-set-selections"
 end
 
 # vim: ts=2 sw=2 et ft=ruby:
