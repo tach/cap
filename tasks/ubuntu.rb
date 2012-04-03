@@ -14,6 +14,32 @@ namespace :ubuntu1004 do
     install_deb(*pkgs)
   end
 
+  task :dist_upgrade do
+    # Set sources.list
+    new_dist = ENV['distribution'] or raise "Specify distribution"
+    sources_list = <<_EOT
+# This file is generated automatically by Capistrano
+# See https://github.com/tach/cap/ for details.
+
+# OFFICIAL PACKAGES
+deb http://jp.archive.ubuntu.com/ubuntu #{new_dist} main restricted universe multiverse
+deb-src http://jp.archive.ubuntu.com/ubuntu #{new_dist} main restricted universe multiverse
+
+# OFFICIAL UPDATES
+deb http://jp.archive.ubuntu.com/ubuntu #{new_dist}-updates main restricted universe multiverse
+deb-src http://jp.archive.ubuntu.com/ubuntu #{new_dist}-updates main restricted universe multiverse
+
+# SECURITY UPDATES
+deb http://security.ubuntu.com/ubuntu #{new_dist}-security main restricted universe multiverse
+deb-src http://security.ubuntu.com/ubuntu #{new_dist}-security main restricted universe multiverse
+_EOT
+    put_as_root(sources_list, "/etc/apt/sources.list")
+
+    # Upgrade
+    run "#{sudo} apt-get update"
+    install_deb('dpkg', 'apt', 'debconf', 'libc6', 'python-minimal')
+  end
+
   task :minimize, :roles => :ubuntu1004 do
     listfile = 'files/selections_minimum_10.04.list'
     exec_minimize(listfile)

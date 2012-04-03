@@ -4,8 +4,8 @@
 
 def put_as_root(data, path, options={})
   tmp_path = "/tmp/#{File.basename(path)}.#{rand}"
-  put path, tmp_path, options
-  run "sudo cp #{tmp_path} #{path}"
+  put data, tmp_path, options
+  run "#{sudo} cp #{tmp_path} #{path}"
   run "rm #{tmp_path}"
 end
 
